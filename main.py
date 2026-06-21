@@ -52,29 +52,27 @@ def get_direct_urls_by_id_or_url(target: str):
             return None, None, None, None
 
 def get_final_path(filename: str):
-    """Определяет, куда сохранять файл (в выбранную пользователем папку или по умолчанию)."""
-    global custom_download_path
-    
-    if custom_download_path and os.path.exists(custom_download_path):
-        downloads_dir = custom_download_path
+    # Упрощенная логика: не лезем в реестр Windows
+    if os.name == 'nt':
+        # Твой текущий код для Windows оставь здесь, если хочешь
+        import winreg
+        sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
+            downloads_dir = winreg.QueryValueEx(key, '{374DE290-123F-4565-9164-39C4925E467B}')[0]
     else:
-        # Стандартный путь по умолчанию
-        if os.name == 'nt':
-            import winreg
-            sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
-                downloads_dir = winreg.QueryValueEx(key, '{374DE290-123F-4565-9164-39C4925E467B}')[0]
-        else:
-            downloads_dir = '/storage/emulated/0/Download'
-            if not os.path.exists(downloads_dir):
-                downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+        # Это путь для Android
+        downloads_dir = '/storage/emulated/0/Download'
         
+    # Создаем папку, если ее нет
     if not os.path.exists(downloads_dir):
-        os.makedirs(downloads_dir)
-        
+        try:
+            os.makedirs(downloads_dir, exist_ok=True)
+        except:
+            # Если нет доступа к основной папке, сохраняем в рабочую директорию приложения
+            downloads_dir = os.getcwd()
+
     clean_name = "".join([c for c in filename if c.isalpha() or c.isdigit() or c in ' .-_()']).strip()
     return os.path.join(downloads_dir, clean_name)
-
 
 # --- Интерфейс Flet ---
 
