@@ -1,3 +1,4 @@
 flet
 yt-dlp
 requests
+Pillow
