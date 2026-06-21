@@ -1,0 +1,7 @@
+[tool.flet]
+app-name = "downloader"
+product-name = "Downloader YT"
+org-domain = "com.example"
+
+[tool.flet.android]
+icon = "icon.png"
