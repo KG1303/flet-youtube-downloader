@@ -42,7 +42,7 @@ jobs:
 
       - name: Build APK
         run: |
-          flet build apk --project "Downloader" --product "Downloader YT" --icon "icon.png"
+          flet build apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
